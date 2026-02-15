@@ -6,6 +6,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');    
 const routes = require('./routes/policy.route');
+const { errorHandler, notFound } = require('./middlewares/error.middleware');
 
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>console.log("MongoDB Connected"))
@@ -24,5 +25,7 @@ app.use(rateLimit({
 }));
 
 app.use('/api', routes);
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(process.env.PORT, () => console.log(`Server running on ${process.env.PORT}`));
