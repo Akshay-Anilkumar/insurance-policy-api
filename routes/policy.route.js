@@ -4,24 +4,42 @@ const { Worker } = require('worker_threads');
 const policyService = require('../services/policy.services');
 const { validate, uploadValidation, searchValidation, aggregateValidation } = require('../middlewares/validator.middleware');
 const router = express.Router();
+const cache = require('../utils/cache');
 
 const upload = multer({ dest: 'uploads/' });
 
-router.post('/policy/upload', upload.single('file'), uploadValidation, validate, (req, res, next) => {
-  try {
-    const worker = new Worker('./worker/fileProcessor.worker.js', {
-      workerData: req.file.path
-    });
+router.post(
+  '/policy/upload',
+  upload.single('file'),
+  uploadValidation,
+  validate,
+  (req, res, next) => {
 
-    worker.on('message', () => {
-      res.json({ message: 'File processed successfully' });
-    });
+    try {
+      const worker = new Worker('./workers/fileProcessor.worker.js', {
+        workerData: req.file.path
+      });
 
-    worker.on('error', err => next(err));
-  } catch (err) {
-    next(err);
+      worker.on('message', () => {
+        cache.flushAll();
+        console.log('CACHE CLEARED AFTER UPLOAD');
+
+        res.json({ message: 'File processed successfully' });
+      });
+
+      worker.on('error', err => next(err));
+
+      worker.on('exit', code => {
+        if (code !== 0) {
+          console.error(`Worker stopped with exit code ${code}`);
+        }
+      });
+
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 router.get('/policy/search', searchValidation, validate, async (req, res, next) => {
   try {

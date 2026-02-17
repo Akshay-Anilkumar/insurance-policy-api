@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-module.exports = mongoose.model('User', new mongoose.Schema({
+const schema = new mongoose.Schema({
   firstName: String,
   dob: Date,
   address: String,
@@ -10,4 +10,10 @@ module.exports = mongoose.model('User', new mongoose.Schema({
   email: String,
   gender: String,
   userType: String
-}));
+});
+
+schema.index({ firstName: 1 });
+
+schema.index({ email: 1 }, { unique: true });
+
+module.exports = mongoose.model('User', schema);

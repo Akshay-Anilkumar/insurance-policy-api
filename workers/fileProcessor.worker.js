@@ -25,7 +25,7 @@ const Policy = require('../models/policy.model');
       const agent = await Agent.findOneAndUpdate(
         { agentName: row.agent },
         { agentName: row.agent },
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: 'after' }
       );
 
       const user = await User.findOneAndUpdate(
@@ -41,7 +41,7 @@ const Policy = require('../models/policy.model');
           gender: row.gender,
           userType: row.userType
         },
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: 'after' }
       );
 
       await Account.findOneAndUpdate(
@@ -50,19 +50,19 @@ const Policy = require('../models/policy.model');
           accountName: row.account_name,
           userId: user._id
         },
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: 'after' }
       );
 
       const lob = await LOB.findOneAndUpdate(
         { categoryName: row.category_name },
         { categoryName: row.category_name },
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: 'after' }
       );
 
       const carrier = await Carrier.findOneAndUpdate(
         { companyName: row.company_name },
         { companyName: row.company_name },
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: 'after' }
       );
 
       await Policy.findOneAndUpdate(
@@ -75,7 +75,7 @@ const Policy = require('../models/policy.model');
           carrierId: carrier._id,
           userId: user._id
         },
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: 'after' }
       );
     }
 

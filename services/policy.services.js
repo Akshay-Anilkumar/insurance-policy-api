@@ -1,6 +1,14 @@
 const Policy = require('../models/policy.model');
+const cache = require('../utils/cache');
 
 exports.searchPoliciesByUsername = async (username) => {
+  const cacheKey = `search:${username.toLowerCase()}`;
+
+  const cached = cache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const result = await Policy.aggregate([
     {
       $lookup: {
@@ -61,10 +69,20 @@ exports.searchPoliciesByUsername = async (username) => {
     { $sort: { 'user.firstName': 1 } }
   ]);
 
-  return { count: result.length, users: result };
+  const response = { count: result.length, users: result };
+  cache.set(cacheKey, response);
+
+  return response;
 };
 
 exports.getAggregatedPolicies = async (page = 1, limit = 5) => {
+  const cacheKey = `aggregate:${page}:${limit}`;
+
+  const cached = cache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const skip = (page - 1) * limit;
 
   const data = await Policy.aggregate([
@@ -123,11 +141,15 @@ exports.getAggregatedPolicies = async (page = 1, limit = 5) => {
 
   const total = totalUsers[0]?.count || 0;
 
-  return {
+  const response = {
     page,
     limit,
     totalUsers: total,
     totalPages: Math.ceil(total / limit),
     data
   };
+
+  cache.set(cacheKey, response);
+
+  return response;
 };
