@@ -49,7 +49,7 @@ src/
 ### 1. Clone Repository
 
 ```
-git clone <your-repo-url>
+git clone https://github.com/Akshay-Anilkumar/insurance-policy-api
 cd insurance-policy-api
 ```
 
