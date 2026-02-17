@@ -15,7 +15,6 @@ const Policy = require('../models/policy.model');
 
     console.log("Worker DB Connected");
 
-    // Read file
     const workbook = xlsx.readFile(workerData);
     const sheet = xlsx.utils.sheet_to_json(
       workbook.Sheets[workbook.SheetNames[0]]
@@ -23,14 +22,12 @@ const Policy = require('../models/policy.model');
 
     for (const row of sheet) {
 
-      // 1️⃣ Agent
       const agent = await Agent.findOneAndUpdate(
         { agentName: row.agent },
         { agentName: row.agent },
         { upsert: true, new: true }
       );
 
-      // 2️⃣ User
       const user = await User.findOneAndUpdate(
         { email: row.email },
         {
@@ -47,7 +44,6 @@ const Policy = require('../models/policy.model');
         { upsert: true, new: true }
       );
 
-      // 3️⃣ Account
       await Account.findOneAndUpdate(
         { accountName: row.account_name },
         {
@@ -57,21 +53,18 @@ const Policy = require('../models/policy.model');
         { upsert: true, new: true }
       );
 
-      // 4️⃣ LOB
       const lob = await LOB.findOneAndUpdate(
         { categoryName: row.category_name },
         { categoryName: row.category_name },
         { upsert: true, new: true }
       );
 
-      // 5️⃣ Carrier
       const carrier = await Carrier.findOneAndUpdate(
         { companyName: row.company_name },
         { companyName: row.company_name },
         { upsert: true, new: true }
       );
 
-      // 6️⃣ Policy
       await Policy.findOneAndUpdate(
         { policyNumber: row.policy_number },
         {
