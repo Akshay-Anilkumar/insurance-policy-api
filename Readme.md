@@ -11,6 +11,8 @@ A backend REST API built using **Node.js, Express, MongoDB, and Worker Threads**
 * Search policy details by username (partial & case-insensitive)
 * Aggregated policies grouped per user
 * Pagination support for aggregation API
+* In-memory caching for search & aggregation APIs
+* Automatic cache invalidation after new data upload
 * Duplicate-safe data ingestion (upsert based)
 * Production-ready middlewares (Helmet, Rate Limit, Logging)
 * Environment-based configuration
