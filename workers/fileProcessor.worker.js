@@ -11,7 +11,7 @@ const Policy = require('../models/policy.model');
 
 (async () => {
   try {
-    await mongoose.connect('mongodb://127.0.0.1:27017/insurance');
+    await mongoose.connect(process.env.MONGO_URI);
 
     console.log("Worker DB Connected");
 
